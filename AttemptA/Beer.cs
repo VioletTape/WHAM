@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 
 namespace AttemptA {
@@ -15,7 +16,7 @@ namespace AttemptA {
 
         public decimal Alk { get; set; }
 
-        [ActionLink(1)]
+        [ActionLink(1, Times = 1)]
         public bool Open() {
             if (IsOpened)
                 return false;
@@ -35,14 +36,21 @@ namespace AttemptA {
         public bool Drink() {
             return IsOpened;
         }
+
+        public void Foo() {
+            
+        }
     }
 
     public class ResourceUidAttribute : Attribute { }
 
     public class ActionLinkAttribute : Attribute {
+        public int Action { get; }
+        public int Times { get; set; }
         public int DependsOn {get; set; }
         public ActionLinkAttribute() { }
-        public ActionLinkAttribute(string depOn) { }
-        public ActionLinkAttribute(int action) { }
+        public ActionLinkAttribute(int action) {
+            Action = action;
+        }
     }
 }

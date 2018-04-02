@@ -1,24 +1,47 @@
-﻿using Jil;
+﻿using System.Runtime.InteropServices;
+using Jil;
 
 namespace AttemptA.Web
 {
     public class HomeModule : Nancy.NancyModule
     {
+        private static Beer beer;
+
         public HomeModule()
         {
-            var beer = new Beer(1){Alk = 12, Name = "Barely wine"};
-            var serialize = XSer.Serialize(beer);
-            Get["/beer/"] = _ => serialize;
+            XSer.Register<Beer>();
+          
+            Get["/beer/"] = _ => CreateBeer();
 
-            Get["/beer/{id}/open"] = _ => OpenBeer(_);
+            // case 1           
+//            Get["/beer/{id}/open"] = _ => OpenBeer(_);
+
+            // case 2
+            Get["/beer/{id}/{method}"] = _ => BeerHandler(_);
         }
 
-        private object OpenBeer(object o) {
-            var beer = new Beer(1){Alk = 12, Name = "Barely wine"};
+        private object CreateBeer() {
+            beer = new Beer(1) { Alk = 12, Name = "Barely wine" };
+            return XSer.Serialize(beer);
+        }
 
-            beer.Open();
+        // case 2
+        private object BeerHandler(dynamic o) {
+            var beerId = (int)o.id;
+            var method = (string) o.method;
 
-            return JSON.Serialize(beer);
+            var handle = XSer.Handle(beer, method);
+
+            return handle;
+        }
+
+        // case 1 
+        private object OpenBeer(dynamic o) {
+            var id = (int)o.id;
+
+           beer.Open();
+
+            return XSer.Serialize(beer, _ => beer.Open());
         }
     }
 }

@@ -2,14 +2,11 @@
 using Jil;
 using NUnit.Framework;
 
-namespace AttemptA
-{
+namespace AttemptA {
     [TestFixture]
-    public class BeerTests
-    {
+    public class BeerTests {
         [Test]
-        public void BeerWorksInGeneral()
-        {
+        public void BeerWorksInGeneral() {
             var beer = new Beer(1);
             beer.Cool().Should().BeTrue();
             beer.IsOpened.Should().BeFalse();
@@ -21,8 +18,7 @@ namespace AttemptA
         }
 
         [Test]
-        public void SimpleJson()
-        {
+        public void SimpleJson() {
             var beer = new Beer(1) {Alk = 5.2m, Name = "Komes"};
             var serialize = JSON.Serialize(beer);
 
@@ -35,6 +31,13 @@ namespace AttemptA
             var beer = new Beer(1) {Alk = 5.2m, Name = "Komes"};
 
             var serialize = XSer.Serialize(beer);
+        }
+
+        [Test]
+        public void AttributesX() {
+            var beer = new Beer(1) {Alk = 5.2m, Name = "Komes"};
+
+            var serialize = XSer.Serialize(beer, x => beer.Open());
         }
     }
 }
