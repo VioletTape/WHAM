@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AttemptA {
+namespace AttemptA.Attributes {
     public class ActionLinkAttribute : Attribute {
         public int Action { get; }
         public int Times { get; set; }
