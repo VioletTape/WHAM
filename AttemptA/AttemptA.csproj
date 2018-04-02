@@ -65,8 +65,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ActionLinkAttribute.cs" />
     <Compile Include="Beer.cs" />
     <Compile Include="BeerTests.cs" />
+    <Compile Include="Attributes\ResourceUidAttribute.cs" />
     <Compile Include="XSer.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

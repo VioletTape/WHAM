@@ -1,20 +1,19 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Runtime.CompilerServices;
+﻿using AttemptA.Attributes;
 
 namespace AttemptA {
     public class Beer {
-        [ResourceUid] public int Id { get; private set; }
+        [ResourceUid]
+        public int Id { get; }
 
         public bool IsOpened;
-
-        public Beer(int id) {
-            Id = id;
-        }
 
         public string Name { get; set; }
 
         public decimal Alk { get; set; }
+
+        public Beer(int id) {
+            Id = id;
+        }
 
         [ActionLink(1, Times = 1)]
         public bool Open() {
@@ -37,20 +36,6 @@ namespace AttemptA {
             return IsOpened;
         }
 
-        public void Foo() {
-            
-        }
-    }
-
-    public class ResourceUidAttribute : Attribute { }
-
-    public class ActionLinkAttribute : Attribute {
-        public int Action { get; }
-        public int Times { get; set; }
-        public int DependsOn {get; set; }
-        public ActionLinkAttribute() { }
-        public ActionLinkAttribute(int action) {
-            Action = action;
-        }
+        public void Foo() { }
     }
 }
