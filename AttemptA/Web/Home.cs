@@ -18,6 +18,12 @@ namespace AttemptA.Web
 
             // case 2
             Get["/beer/{id}/{method}"] = _ => BeerHandler(_);
+            Get["/beer/{id}/init"] = _ => BeerReset();
+        }
+
+        private object BeerReset() {
+            XSer.ResetCounters(beer);
+            return XSer.Serialize(beer);
         }
 
         private object CreateBeer() {

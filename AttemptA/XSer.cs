@@ -26,6 +26,7 @@ namespace AttemptA {
             var actionLinkMethods = GetActionLinkMethods<T>();
             linksPerClass.Add(type, actionLinkMethods);
             counters.Add(type, new Dictionary<int, Xxx>());
+            cntRef.Add(type, new Dictionary<object, Dictionary<int, Xxx>>());
 
             foreach (var info in actionLinkMethods) {
                 var attribute = info.GetCustomAttribute<ActionLinkAttribute>();
@@ -40,17 +41,23 @@ namespace AttemptA {
             var type = typeof(T);
 
             var value = type.GetPropertyByName("Id").GetValue(obj);
-//            cntRef[type][value] = counters[type];
+            if (!cntRef[type].ContainsKey(value)) {
+                var dictionary = new Dictionary<int, Xxx>();
+                foreach (var pair in counters[type]) {
+                    dictionary.Add(pair.Key, pair.Value.Clone());
+                }
+                cntRef[type].Add(value, dictionary);
+            }
 
             foreach (var info in linksPerClass[type]) {
                 var attr = info.GetCustomAttribute<ActionLinkAttribute>();
                 if (attr.DependsOn > 0
-                    && counters[type][attr.DependsOn].Count == 0) {
+                    && cntRef[type][value][attr.DependsOn].Count == 0) {
                         continue;
                 }
 
                 if (attr.Times > 0 &&  
-                    attr.Times <= counters[type][attr.Action].Count) {
+                    attr.Times <= cntRef[type][value][attr.Action].Count) {
                     continue;
                 }
 
@@ -86,18 +93,30 @@ namespace AttemptA {
             var minfo = linksPerClass[type].Single(mi => mi.Name == methodName);
             minfo.Invoke(entity, new object[0]);
 
-            counters[type].Values.Single(im => im.MethodInfo.Name == methodName).Count++;
+            var value = type.GetPropertyByName("Id").GetValue(entity);
+
+            cntRef[type][value].Values.Single(im => im.MethodInfo.Name == methodName).Count++;
 
             return Serialize(entity);
         }
 
         public static void ResetCounters<T>(T entity) {
-
+            var type = typeof(T);
+            var value = type.GetPropertyByName("Id").GetValue(entity);
+            cntRef[type][value].Values.ToList().ForEach(x => x.Reset());
         }
 
         private class Xxx {
             public MethodInfo MethodInfo { get; set; }
             public int Count { get; set; }
+
+            public Xxx Clone() {
+                return new Xxx {Count = 0, MethodInfo = MethodInfo};
+            }
+
+            public void Reset() {
+                Count = 0;
+            }
         }
     }
 }
