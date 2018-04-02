@@ -40,7 +40,7 @@ namespace AttemptA {
             var type = typeof(T);
 
             var value = type.GetPropertyByName("Id").GetValue(obj);
-            cntRef[type][value] = counters[type];
+//            cntRef[type][value] = counters[type];
 
             foreach (var info in linksPerClass[type]) {
                 var attr = info.GetCustomAttribute<ActionLinkAttribute>();

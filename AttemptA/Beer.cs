@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace AttemptA {
     public class Beer {
-        [ResourceUid] public int Id;
+        [ResourceUid] public int Id { get; set; }
 
         public bool IsOpened;
 
