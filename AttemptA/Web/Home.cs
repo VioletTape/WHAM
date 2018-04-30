@@ -1,4 +1,6 @@
-﻿using Nancy;
+﻿using AttemptA.Entities;
+using AttemptA.Entities.Origins;
+using Nancy;
 
 namespace AttemptA.Web {
     public class HomeModule : NancyModule {
@@ -8,8 +10,13 @@ namespace AttemptA.Web {
             XSer.Register<Beer>();
 
             Get["/beer/"] = _ => CreateBeer();
+            Get["/beer/{id}"] = _ => GetElement(_);
             Get["/beer/{id}/{method}"] = _ => BeerHandler(_);
             Get["/beer/{id}/init"] = _ => BeerReset();
+        }
+
+        private object GetElement(dynamic o) {
+            return XSer.Serialize(beer);
         }
 
         // Should not be necessary in real life. 

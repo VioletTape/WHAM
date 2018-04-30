@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using AttemptA.Entities;
+using AttemptA.Entities.Origins;
+using FluentAssertions;
 using Jil;
 using NUnit.Framework;
 
@@ -31,13 +33,6 @@ namespace AttemptA {
             var beer = new Beer(1) {Alk = 5.2m, Name = "Komes"};
 
             var serialize = XSer.Serialize(beer);
-        }
-
-        [Test]
-        public void AttributesX() {
-            var beer = new Beer(1) {Alk = 5.2m, Name = "Komes"};
-
-            var serialize = XSer.Serialize(beer, x => beer.Open());
         }
     }
 }

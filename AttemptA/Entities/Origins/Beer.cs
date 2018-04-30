@@ -1,9 +1,9 @@
 ﻿using AttemptA.Attributes;
 
-namespace AttemptA {
+namespace AttemptA.Entities.Origins {
     public class Beer {
         [ResourceUid]
-        public int Id { get; }
+        public int Idx { get; }
 
         public bool IsOpened;
 
@@ -12,7 +12,7 @@ namespace AttemptA {
         public decimal Alk { get; set; }
 
         public Beer(int id) {
-            Id = id;
+            Idx = id;
         }
 
         [ActionLink(1, Times = 1)]

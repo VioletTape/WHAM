@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using AttemptA.Attributes;
@@ -19,6 +18,8 @@ namespace AttemptA {
         private static readonly Dictionary<Type, Dictionary<object, Dictionary<int, Xxx>>> cntRef
             = new Dictionary<Type, Dictionary<object, Dictionary<int, Xxx>>>();
 
+        private static string uri; 
+
         public static void Register<T>() {
             var type = typeof(T);
             if (linksPerClass.ContainsKey(type))
@@ -33,6 +34,14 @@ namespace AttemptA {
                 var attribute = info.GetCustomAttribute<ActionLinkAttribute>();
                 counters[type].Add(attribute.Action, new Xxx {MethodInfo = info, Count = 0});
             }
+
+            // get URI of the service and potentially info, should it be enhanced with 
+            // origin-source field or not 
+            var customAttributes = Assembly.GetAssembly(type).GetCustomAttributes(typeof(MarkOriginsAttribute));
+            if (customAttributes.Any()) {
+                var attribute = (MarkOriginsAttribute)customAttributes.First();
+                uri = attribute.Uri;
+            }
         }
 
         public static string Serialize<T>(T obj, string method = "") {
@@ -41,25 +50,38 @@ namespace AttemptA {
             var list = new List<string>();
             var type = typeof(T);
 
-            var value = type.GetPropertyByName("Id").GetValue(obj);
-            if (!cntRef[type].ContainsKey(value)) {
+            // get resource id 
+            var uid = type.GetProperties()
+                .Where(p => p.GetCustomAttribute<ResourceUidAttribute>() != null)
+                                           .Select(p => p.GetValue(obj))
+                                           .First();
+            
+
+
+            //var value = type.GetPropertyByName("Id").GetValue(obj);
+            if (!cntRef[type].ContainsKey(uid)) {
                 var dictionary = new Dictionary<int, Xxx>();
                 foreach (var pair in counters[type]) dictionary.Add(pair.Key, pair.Value.Clone());
-                cntRef[type].Add(value, dictionary);
+                cntRef[type].Add(uid, dictionary);
             }
 
+            // add origin source links 
+            list.Add($"\"original-source\":\"{uri}{type.Name}/{uid}\"");
+
+            // add action links 
             foreach (var info in linksPerClass[type]) {
                 var attr = info.GetCustomAttribute<ActionLinkAttribute>();
                 if (attr.DependsOn > 0
-                    && cntRef[type][value][attr.DependsOn].Count == 0)
+                    && cntRef[type][uid][attr.DependsOn].Count == 0)
                     continue;
 
                 if (attr.Times > 0 &&
-                    attr.Times <= cntRef[type][value][attr.Action].Count)
+                    attr.Times <= cntRef[type][uid][attr.Action].Count)
                     continue;
 
-                list.Add($"\"{info.Name}\":\"http://localhost:1234/{type.Name}/1/{info.Name}\"");
+                list.Add($"\"{info.Name}\":\"{uri}{type.Name}/{uid}/{info.Name}\"");
             }
+
 
             var sb = new StringBuilder(res.Substring(0, res.Length - 1));
             foreach (var l in list) sb.Append("," + l);
@@ -67,14 +89,6 @@ namespace AttemptA {
             sb.Append("}");
             var serialize = sb.ToString();
             return serialize;
-        }
-
-        internal static object Serialize(Beer beer, Expression<Func<object, object>> p) {
-            var bodyNodeType = p.Body as UnaryExpression;
-            var expression = bodyNodeType.Operand as MethodCallExpression;
-            var methodName = expression.Method.Name;
-
-            return "";
         }
 
         public static List<MethodInfo> GetActionLinkMethods<T>() {
@@ -90,9 +104,13 @@ namespace AttemptA {
             var minfo = linksPerClass[type].Single(mi => mi.Name == methodName);
             minfo.Invoke(entity, new object[0]);
 
-            var value = type.GetPropertyByName("Id").GetValue(entity);
+            // get resource id 
+            var uid = type.GetProperties()
+                .Where(p => p.GetCustomAttribute<ResourceUidAttribute>() != null)
+                .Select(p => p.GetValue(entity))
+                .First();
 
-            cntRef[type][value].Values.Single(im => im.MethodInfo.Name == methodName).Count++;
+            cntRef[type][uid].Values.Single(im => im.MethodInfo.Name == methodName).Count++;
 
             return Serialize(entity);
         }
