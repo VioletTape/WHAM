@@ -36,6 +36,7 @@ namespace AttemptA {
             return IsOpened;
         }
 
-        public void Foo() { }
+        public void Foo() {
+        }
     }
 }

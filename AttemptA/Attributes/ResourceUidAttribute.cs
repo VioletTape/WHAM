@@ -1,5 +1,6 @@
 ﻿using System;
 
 namespace AttemptA.Attributes {
-    public class ResourceUidAttribute : Attribute { }
+    public class ResourceUidAttribute : Attribute {
+    }
 }

@@ -13,10 +13,10 @@ namespace AttemptA {
         private static readonly Dictionary<Type, List<MethodInfo>> linksPerClass =
             new Dictionary<Type, List<MethodInfo>>();
 
-        private static readonly Dictionary<Type, Dictionary<int,Xxx>> counters =
+        private static readonly Dictionary<Type, Dictionary<int, Xxx>> counters =
             new Dictionary<Type, Dictionary<int, Xxx>>();
 
-        private static readonly Dictionary<Type, Dictionary<object, Dictionary<int, Xxx>>> cntRef 
+        private static readonly Dictionary<Type, Dictionary<object, Dictionary<int, Xxx>>> cntRef
             = new Dictionary<Type, Dictionary<object, Dictionary<int, Xxx>>>();
 
         public static void Register<T>() {
@@ -31,7 +31,7 @@ namespace AttemptA {
 
             foreach (var info in actionLinkMethods) {
                 var attribute = info.GetCustomAttribute<ActionLinkAttribute>();
-                counters[type].Add(attribute.Action, new Xxx{MethodInfo = info, Count = 0});
+                counters[type].Add(attribute.Action, new Xxx {MethodInfo = info, Count = 0});
             }
         }
 
@@ -44,23 +44,19 @@ namespace AttemptA {
             var value = type.GetPropertyByName("Id").GetValue(obj);
             if (!cntRef[type].ContainsKey(value)) {
                 var dictionary = new Dictionary<int, Xxx>();
-                foreach (var pair in counters[type]) {
-                    dictionary.Add(pair.Key, pair.Value.Clone());
-                }
+                foreach (var pair in counters[type]) dictionary.Add(pair.Key, pair.Value.Clone());
                 cntRef[type].Add(value, dictionary);
             }
 
             foreach (var info in linksPerClass[type]) {
                 var attr = info.GetCustomAttribute<ActionLinkAttribute>();
                 if (attr.DependsOn > 0
-                    && cntRef[type][value][attr.DependsOn].Count == 0) {
-                        continue;
-                }
-
-                if (attr.Times > 0 &&  
-                    attr.Times <= cntRef[type][value][attr.Action].Count) {
+                    && cntRef[type][value][attr.DependsOn].Count == 0)
                     continue;
-                }
+
+                if (attr.Times > 0 &&
+                    attr.Times <= cntRef[type][value][attr.Action].Count)
+                    continue;
 
                 list.Add($"\"{info.Name}\":\"http://localhost:1234/{type.Name}/1/{info.Name}\"");
             }

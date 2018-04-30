@@ -1,16 +1,12 @@
-﻿using System.Runtime.InteropServices;
-using Jil;
+﻿using Nancy;
 
-namespace AttemptA.Web
-{
-    public class HomeModule : Nancy.NancyModule
-    {
+namespace AttemptA.Web {
+    public class HomeModule : NancyModule {
         private static Beer beer;
 
-        public HomeModule()
-        {
+        public HomeModule() {
             XSer.Register<Beer>();
-          
+
             Get["/beer/"] = _ => CreateBeer();
             Get["/beer/{id}/{method}"] = _ => BeerHandler(_);
             Get["/beer/{id}/init"] = _ => BeerReset();
@@ -26,7 +22,7 @@ namespace AttemptA.Web
 
 
         private object CreateBeer() {
-            beer = new Beer(1) { Alk = 12, Name = "Barely wine" };
+            beer = new Beer(1) {Alk = 12, Name = "Barely wine"};
             return XSer.Serialize(beer);
         }
 
