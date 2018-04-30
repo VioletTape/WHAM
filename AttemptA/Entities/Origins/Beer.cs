@@ -39,4 +39,11 @@ namespace AttemptA.Entities.Origins {
         public void Foo() {
         }
     }
+
+    public class Cup {
+        [ResourceUid]
+        public int  Number { get; set; }
+
+        public string Name { get; set; }
+    }
 }
