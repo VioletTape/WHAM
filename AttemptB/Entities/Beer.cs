@@ -1,12 +1,12 @@
-﻿using AttemptA.Attributes;
+﻿using AttemptB.Attributes;
 
-namespace AttemptA.Entities.Origins {
+namespace AttemptB.Entities {
     public class Beer {
-        [ResourceUid]
         public int Idx { get; }
 
+
         public bool IsOpened;
-        public int Volume;
+        public int Volume = 100;
 
         public string Name { get; set; }
 
@@ -16,7 +16,7 @@ namespace AttemptA.Entities.Origins {
             Idx = id;
         }
 
-        [ActionLink(1, Times = 1)]
+        [Link(NotAvailableWhen = nameof(IsOpened))]
         public bool Open() {
             if (IsOpened)
                 return false;
@@ -24,7 +24,7 @@ namespace AttemptA.Entities.Origins {
             return IsOpened = true;
         }
 
-        [ActionLink(2)]
+        [Link(AvailableWhen = nameof(IsOpened))]
         public bool Cool() {
             if (IsOpened)
                 return false;
@@ -32,26 +32,17 @@ namespace AttemptA.Entities.Origins {
             return true;
         }
 
-        [ActionLink(3, DependsOn = 1)]
+        [Link(AvailableWhen = nameof(IsOpened))]
+        [Link(AvailableWhen = nameof(Volume), MoreThan = 0)]
         public bool Drink(int sip) {
             if (IsOpened)
                 // calculate amount of beer in bottle
                 // after a sip
                 // if something remains 
                 return true;
-                // esle return false. 
+            // esle return false. 
 
             return false;
         }
-
-        public void Foo() {
-        }
-    }
-
-    public class Cup {
-        [ResourceUid]
-        public int  Number { get; set; }
-
-        public string Name { get; set; }
     }
 }

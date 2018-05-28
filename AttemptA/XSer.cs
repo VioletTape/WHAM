@@ -43,7 +43,7 @@ namespace AttemptA {
                 uri = attribute.Uri;
             }
         }
-
+    
         public static string Serialize<T>(T obj, string method = "") {
             var res = JSON.Serialize(obj);
 
