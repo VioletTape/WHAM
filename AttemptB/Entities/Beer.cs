@@ -24,7 +24,7 @@ namespace AttemptB.Entities {
             return IsOpened = true;
         }
 
-        [Link(AvailableWhen = nameof(IsOpened))]
+        [Link]
         public bool Cool() {
             if (IsOpened)
                 return false;

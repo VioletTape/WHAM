@@ -1,4 +1,5 @@
 ﻿using AttemptB.Entities;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace AttemptB {
@@ -12,6 +13,21 @@ namespace AttemptB {
             };
 
             var res = XSer.Serialize(beer);
+            res.Should().Be("");
+        }
+
+        [Test]
+        public void Ser2()
+        {
+            var beer = new Beer(2)
+            {
+                Alk = 10,
+                Name = "Komes",
+                IsOpened = true
+            };
+
+            var res = XSer.Serialize(beer);
+            res.Should().Be("");
         }
     }
 }

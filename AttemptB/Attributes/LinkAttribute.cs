@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.AccessControl;
 
 namespace AttemptB.Attributes {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
@@ -8,6 +7,8 @@ namespace AttemptB.Attributes {
 
         public string NotAvailableWhen { get; set; }
 
+        public string LinkName { get; set; }
+
         public int MoreThan { get; set; }
         public int LessThan { get; set; }
         public int Is { get; set; }
@@ -15,6 +16,11 @@ namespace AttemptB.Attributes {
         public LinkAttribute() {
             AvailableWhen = string.Empty;
             NotAvailableWhen = string.Empty;
+            LinkName = string.Empty;
+        }
+
+        public string GetNameOfFiled() {
+            return AvailableWhen ?? NotAvailableWhen;
         }
     }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Xml;
 using AttemptA.Attributes;
 
 
@@ -39,4 +36,4 @@ using AttemptA.Attributes;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: MarkOrigins(EntitiesFrom = "AttemptA.Entities.Origins.*",
-             Uri = "http://localhost:1234/")]
+    Uri = "http://localhost:1234/")]
