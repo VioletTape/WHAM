@@ -2,8 +2,8 @@
 
 namespace AttemptB.Entities {
     public class Beer {
+        [ResourceUid]
         public int Idx { get; }
-
 
         public bool IsOpened;
         public int Volume = 100;

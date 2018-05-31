@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.AccessControl;
 
 namespace AttemptB.Attributes {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
@@ -10,5 +11,10 @@ namespace AttemptB.Attributes {
         public int MoreThan { get; set; }
         public int LessThan { get; set; }
         public int Is { get; set; }
+
+        public LinkAttribute() {
+            AvailableWhen = string.Empty;
+            NotAvailableWhen = string.Empty;
+        }
     }
 }
