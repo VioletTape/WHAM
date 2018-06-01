@@ -10,6 +10,7 @@ namespace AttemptB.Web {
             Get["/beer/create"] = _ => CreateBeer(Request.Query);
             Get["/beer/"] = _ => GetElements();
             Get["/beer/{id}"] = _ => GetElement(_);
+            Get["/beer/{id}/{command}"] = _ => GetElement(_);
         }
 
 

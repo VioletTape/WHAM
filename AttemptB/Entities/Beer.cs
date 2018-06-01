@@ -1,8 +1,9 @@
 ﻿using AttemptB.Attributes;
 
 namespace AttemptB.Entities {
+    [ResourceUid(Name = "Beer")]
     public class Beer {
-        [ResourceUid]
+        [ResourceUid(Name = "Id")]
         public int Idx { get; }
 
         public bool IsOpened;

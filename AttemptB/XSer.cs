@@ -1,22 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using AttemptB.Attributes;
+using AttemptB.Config;
 using FluentAssertions.Common;
 using Jil;
 
 namespace AttemptB {
     public static class XSer {
+        private static WhamSettings GetConfig() {
+            return (WhamSettings) ConfigurationManager.GetSection("wham");
+        }
+
         public static string Serialize<T>(T obj) {
             var refLinks = new List<RefLink>();
 
             var res = JSON.Serialize(obj);
 
-            var linkMethods = GetActionLinkMethods<T>();
+            var domainUrl = GetConfig().DomainUrl.Name; 
 
+            var linkMethods = GetLinkInstrumentedMethods<T>();
+
+            var tempLinks = new List<RefLink>();
             foreach (var linkMethod in linkMethods) {
-                var tempLinks = new List<RefLink>();
+                tempLinks.Clear();
+
                 foreach (var link in linkMethod.GetCustomAttributes<LinkAttribute>()) {
                     var fieldY = obj.GetType().GetField(link.AvailableWhen);
                     if (fieldY != null) {
@@ -26,7 +37,7 @@ namespace AttemptB {
                             case int i:
                                 tempLinks.Add(new RefLink {
                                     Name = linkMethod.Name,
-                                    Value = "link?",
+                                    Value = $"{domainUrl}",
                                     Result = i > link.MoreThan
                                 });
                                 break;
@@ -81,7 +92,7 @@ namespace AttemptB {
                     if (tempLinks.All(l => l.Result))
                         refLinks.Add(tempLinks.First());
                 }
-                else if (tempLinks.First().Result){
+                else if (tempLinks.First().Result) {
                     refLinks.Add(tempLinks.First());
                 }
             }
@@ -93,11 +104,31 @@ namespace AttemptB {
             return res;
         }
 
-        public static List<MethodInfo> GetActionLinkMethods<T>() {
+        public static List<MethodInfo> GetLinkInstrumentedMethods<T>() {
             return typeof(T).GetMethods(BindingFlags.Instance | BindingFlags.Public)
                 .Where(mi => mi.HasAttribute<LinkAttribute>())
                 .Select(mi => mi)
                 .ToList();
+        }
+
+        public static List<FieldInfo> GetUidInstrumentedFields<T>()
+        {
+            return typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public)
+                .Where(mi => mi.HasAttribute<ResourceUidAttribute>())
+                .Select(mi => mi)
+                .ToList();
+        }
+
+        public static List<PropertyInfo> GetUidInstrumentedProperties<T>()
+        {
+            return typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(mi => mi.HasAttribute<ResourceUidAttribute>())
+                .Select(mi => mi)
+                .ToList();
+        }
+
+        public static string GetTypeHandler(Type type) {
+            return type.GetCustomAttribute<ResourceUidAttribute>()?.Name ?? type.Name;
         }
     }
 
