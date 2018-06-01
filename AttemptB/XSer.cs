@@ -20,7 +20,12 @@ namespace AttemptB {
 
             var res = JSON.Serialize(obj);
 
-            var domainUrl = GetConfig().DomainUrl.Name; 
+            var domainUrl = GetConfig().DomainUrl.Name;
+            var controllerHandler = GetTypeHandler(typeof(T));
+            var uid = GetUidInstrumentedFields<T>().FirstOrDefault()?.GetValue(obj)
+                      ?? GetUidInstrumentedProperties<T>().FirstOrDefault()?.GetValue(obj)
+                      ?? 0;
+
 
             var linkMethods = GetLinkInstrumentedMethods<T>();
 
@@ -37,14 +42,14 @@ namespace AttemptB {
                             case int i:
                                 tempLinks.Add(new RefLink {
                                     Name = linkMethod.Name,
-                                    Value = $"{domainUrl}",
+                                    Value = $"{domainUrl}/{controllerHandler}/{uid}/{linkMethod.Name}",
                                     Result = i > link.MoreThan
                                 });
                                 break;
                             case bool b:
                                 tempLinks.Add(new RefLink {
                                     Name = linkMethod.Name,
-                                    Value = "link?",
+                                    Value = $"{domainUrl}/{controllerHandler}/{uid}/{linkMethod.Name}",
                                     Result = b
                                 });
                                 ;
@@ -62,14 +67,14 @@ namespace AttemptB {
                             case int i:
                                 tempLinks.Add(new RefLink {
                                     Name = linkMethod.Name,
-                                    Value = "link?",
+                                    Value = $"{domainUrl}/{controllerHandler}/{uid}/{linkMethod.Name}",
                                     Result = i < link.MoreThan
                                 });
                                 break;
                             case bool b:
                                 tempLinks.Add(new RefLink {
                                     Name = linkMethod.Name,
-                                    Value = "link?",
+                                    Value = $"{domainUrl}/{controllerHandler}/{uid}/{linkMethod.Name}",
                                     Result = !b
                                 });
                                 ;
@@ -81,7 +86,7 @@ namespace AttemptB {
 
                     tempLinks.Add(new RefLink {
                         Name = linkMethod.Name,
-                        Value = "link?",
+                        Value = $"{domainUrl}/{controllerHandler}/{uid}/{linkMethod.Name}",
                         Result = true
                     });
 
